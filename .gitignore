@@ -1,0 +1,10 @@
+.gradle/
+build/
+local.properties
+.idea/
+*.iml
+platform-tools/
+apk-dl/
+*.apk
+*.zip
+build-error.txt
