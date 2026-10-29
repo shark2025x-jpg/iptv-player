@@ -61,6 +61,36 @@ set "SLUG=%LOGIN%/%REPO_NAME%"
 echo.
 echo Аккаунт: %LOGIN%
 
+rem ---------- Файл сборки (всегда актуальный) ----------
+if not exist ".github\workflows" mkdir ".github\workflows"
+if exist wf.b64 del wf.b64
+>>wf.b64 echo bmFtZTogQnVpbGQgQVBLCgpvbjoKICBwdXNoOgogICAgYnJhbmNoZXM6IFsgbWFp
+>>wf.b64 echo biwgbWFzdGVyIF0KICB3b3JrZmxvd19kaXNwYXRjaDoKCnBlcm1pc3Npb25zOgog
+>>wf.b64 echo IGNvbnRlbnRzOiB3cml0ZQoKam9iczoKICBidWlsZDoKICAgIHJ1bnMtb246IHVi
+>>wf.b64 echo dW50dS1sYXRlc3QKICAgIHN0ZXBzOgogICAgICAtIHVzZXM6IGFjdGlvbnMvY2hl
+>>wf.b64 echo Y2tvdXRAdjQKICAgICAgLSB1c2VzOiBhY3Rpb25zL3NldHVwLWphdmFAdjQKICAg
+>>wf.b64 echo ICAgICB3aXRoOgogICAgICAgICAgZGlzdHJpYnV0aW9uOiB0ZW11cmluCiAgICAg
+>>wf.b64 echo ICAgICBqYXZhLXZlcnNpb246IDE3CiAgICAgIC0gbmFtZTogQWNjZXB0IEFuZHJv
+>>wf.b64 echo aWQgU0RLIGxpY2Vuc2VzCiAgICAgICAgcnVuOiB5ZXMgfCAiJEFORFJPSURfSE9N
+>>wf.b64 echo RS9jbWRsaW5lLXRvb2xzL2xhdGVzdC9iaW4vc2RrbWFuYWdlciIgLS1saWNlbnNl
+>>wf.b64 echo cyA+IC9kZXYvbnVsbCB8fCB0cnVlCiAgICAgIC0gdXNlczogZ3JhZGxlL2FjdGlv
+>>wf.b64 echo bnMvc2V0dXAtZ3JhZGxlQHY0CiAgICAgICAgd2l0aDoKICAgICAgICAgIGdyYWRs
+>>wf.b64 echo ZS12ZXJzaW9uOiA4LjEwLjIKICAgICAgLSBuYW1lOiBCdWlsZCByZWxlYXNlIEFQ
+>>wf.b64 echo SwogICAgICAgIHJ1bjogZ3JhZGxlIDphcHA6YXNzZW1ibGVSZWxlYXNlIC0tbm8t
+>>wf.b64 echo ZGFlbW9uCiAgICAgIC0gbmFtZTogUmVuYW1lCiAgICAgICAgcnVuOiBjcCBhcHAv
+>>wf.b64 echo YnVpbGQvb3V0cHV0cy9hcGsvcmVsZWFzZS9hcHAtcmVsZWFzZS5hcGsgSVBUVi1Q
+>>wf.b64 echo bGF5ZXIuYXBrCiAgICAgIC0gdXNlczogYWN0aW9ucy91cGxvYWQtYXJ0aWZhY3RA
+>>wf.b64 echo djQKICAgICAgICB3aXRoOgogICAgICAgICAgbmFtZTogSVBUVi1QbGF5ZXItYXBr
+>>wf.b64 echo CiAgICAgICAgICBwYXRoOiBJUFRWLVBsYXllci5hcGsKICAgICAgLSBuYW1lOiBQ
+>>wf.b64 echo dWJsaXNoIHJlbGVhc2UKICAgICAgICB1c2VzOiBzb2Z0cHJvcHMvYWN0aW9uLWdo
+>>wf.b64 echo LXJlbGVhc2VAdjIKICAgICAgICB3aXRoOgogICAgICAgICAgdGFnX25hbWU6IGxh
+>>wf.b64 echo dGVzdAogICAgICAgICAgbmFtZTogSVBUViBQbGF5ZXIgKGxhdGVzdCkKICAgICAg
+>>wf.b64 echo ICAgIGZpbGVzOiBJUFRWLVBsYXllci5hcGsKICAgICAgICAgIG1ha2VfbGF0ZXN0
+>>wf.b64 echo OiB0cnVlCiAgICAgICAgZW52OgogICAgICAgICAgR0lUSFVCX1RPS0VOOiAke3sg
+>>wf.b64 echo c2VjcmV0cy5HSVRIVUJfVE9LRU4gfX0K
+certutil -decode -f wf.b64 ".github\workflows\build-apk.yml" >nul
+del wf.b64 >nul 2>&1
+
 rem ---------- 3. Репозиторий и загрузка ----------
 echo [3/5] Загружаю проект в %SLUG% ...
 gh repo view %SLUG% >nul 2>&1
