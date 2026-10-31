@@ -1,5 +1,10 @@
 package com.iptv.player
 
+import android.app.UiModeManager
+import android.content.ComponentName
+import android.content.Context
+import android.content.pm.PackageManager
+import android.content.res.Configuration
 import android.net.Uri
 import android.os.Bundle
 import android.provider.OpenableColumns
@@ -17,14 +22,53 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        chooseLauncherIcon()
         WindowCompat.setDecorFitsSystemWindows(window, false)
         setContent {
             val picker = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
                 if (uri != null) importFile(uri)
             }
             IptvTheme {
-                App(vm, onPickFile = { picker.launch(arrayOf("*/*")) })
+                App(vm, onPickFile = {
+                    try {
+                        picker.launch(arrayOf("*/*"))
+                    } catch (e: Exception) {
+                        // На многих ТВ-приставках нет системного выбора файлов
+                        vm.message = "На этом устройстве нет выбора файлов. Добавьте плейлист по ссылке."
+                    }
+                })
             }
+        }
+    }
+
+    /** Оставляет ровно одну иконку: для ТВ — с баннером, для телефона/обычной приставки — обычную. */
+    private fun chooseLauncherIcon() {
+        try {
+            val ui = getSystemService(Context.UI_MODE_SERVICE) as UiModeManager
+            val isTv = ui.currentModeType == Configuration.UI_MODE_TYPE_TELEVISION ||
+                packageManager.hasSystemFeature(PackageManager.FEATURE_LEANBACK)
+            val phone = ComponentName(this, "com.iptv.player.LauncherPhone")
+            val tv = ComponentName(this, "com.iptv.player.LauncherTv")
+            val wantTv = isTv
+            fun setIcon(c: ComponentName, enable: Boolean) {
+                val st = packageManager.getComponentEnabledSetting(c)
+                val enabledNow = when (st) {
+                    PackageManager.COMPONENT_ENABLED_STATE_ENABLED -> true
+                    PackageManager.COMPONENT_ENABLED_STATE_DISABLED -> false
+                    else -> c == phone // значение по умолчанию из манифеста
+                }
+                if (enabledNow != enable) {
+                    packageManager.setComponentEnabledSetting(
+                        c,
+                        if (enable) PackageManager.COMPONENT_ENABLED_STATE_ENABLED
+                        else PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
+                        PackageManager.DONT_KILL_APP,
+                    )
+                }
+            }
+            setIcon(tv, wantTv)
+            setIcon(phone, !wantTv)
+        } catch (_: Exception) {
         }
     }
 

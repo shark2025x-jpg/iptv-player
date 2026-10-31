@@ -80,9 +80,12 @@ object XmltvParser {
         return EpgData(byId, nameToId)
     }
 
-    private val fmtTz = ThreadLocal.withInitial { SimpleDateFormat("yyyyMMddHHmmss Z", Locale.US) }
-    private val fmtNoTz = ThreadLocal.withInitial {
-        SimpleDateFormat("yyyyMMddHHmmss", Locale.US).apply { timeZone = TimeZone.getTimeZone("UTC") }
+    private val fmtTz = object : ThreadLocal<SimpleDateFormat>() {
+        override fun initialValue() = SimpleDateFormat("yyyyMMddHHmmss Z", Locale.US)
+    }
+    private val fmtNoTz = object : ThreadLocal<SimpleDateFormat>() {
+        override fun initialValue() =
+            SimpleDateFormat("yyyyMMddHHmmss", Locale.US).apply { timeZone = TimeZone.getTimeZone("UTC") }
     }
 
     private fun parseTime(s: String?): Long {

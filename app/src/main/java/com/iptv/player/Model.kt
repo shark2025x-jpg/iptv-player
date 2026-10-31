@@ -57,7 +57,7 @@ data class EpgData(
 }
 
 data class Settings(
-    val ambient: Boolean = true,
+    val ambient: Boolean = android.os.Build.VERSION.SDK_INT >= 28,
     val ambientStrength: Float = 0.8f,
     val preset: String = "standard",
     val brightness: Float = 0f,   // -0.3 .. 0.3

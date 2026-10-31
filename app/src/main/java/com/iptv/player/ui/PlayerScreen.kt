@@ -93,9 +93,13 @@ fun PlayerScreen(vm: AppViewModel, np: NowPlaying, onGuide: () -> Unit) {
                 .build()
         }
         // Увеличенный буфер для высоких битрейтов (4K/8K)
+        val memClass = (ctx.getSystemService(android.content.Context.ACTIVITY_SERVICE)
+            as android.app.ActivityManager).memoryClass
+        val bufBytes = (memClass.toLong() * 1024 * 1024 / 4).coerceIn(16L * 1024 * 1024, 256L * 1024 * 1024).toInt()
+        val maxMs = if (memClass >= 256) 90_000 else 30_000
         val load = androidx.media3.exoplayer.DefaultLoadControl.Builder()
-            .setBufferDurationsMs(30_000, 90_000, 2_500, 5_000)
-            .setTargetBufferBytes(256 * 1024 * 1024)
+            .setBufferDurationsMs(15_000, maxMs, 2_500, 5_000)
+            .setTargetBufferBytes(bufBytes)
             .setPrioritizeTimeOverSizeThresholds(false)
             .build()
         ExoPlayer.Builder(ctx).setTrackSelector(selector).setLoadControl(load).build()
